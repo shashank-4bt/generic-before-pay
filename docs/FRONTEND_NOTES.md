@@ -1,6 +1,6 @@
 # JanRx frontend notes
 
-Phase 0 inspection only. No feature code in this revision. Later milestones append a log under "Milestone log".
+Phase 0 is the inspection. Later milestones append a log under "Milestone log". The shell does not implement matching, pricing, OCR, or Kendra lookup.
 
 Inspection date: 2026-10-21. Inspector: frontend agent. Working tree at start: `main` @ `e2dc7cf`, clean.
 
@@ -292,3 +292,34 @@ Alias `crocin` is on Calpol 500, not on its own row. Alias `pantocid 40` is on P
 - Built: this document only.
 - Tests: no frontend tests yet. Backend pytest: not installed, 0 tests in repo.
 - Blockers carried forward: no HTTP API, no OCR route, no Kendra/PIN data, no price dates, no medicine-info fields, no approved Hindi, no approved privacy copy, no numeric match thresholds in the repo, no shared misspelling suite, fixture provenance on all 20 drugs.
+
+### Phase 1 — foundation / shell
+
+Design lock (Refero MCP was unauthenticated, so this uses the product brief plus the bundled craft rules, not a live style pull):
+
+- Primary direction: a public-service form, in the spirit of a GOV.UK service page. White canvas, near-black ink `#0b0c0c`, 1px rules, square controls, no elevation.
+- Preserve: 18px body, system font stack with Devanagari faces first (`Nirmala UI`, `Mangal`, `Noto Sans Devanagari`), yellow `#ffdd00` keyboard focus with black text, black primary buttons, numbered steps as a list.
+- Link colour `#1d4f91` is for text links only. Focus yellow is for keyboard focus only.
+- Reject: indigo, gradients, glass, card grids, editorial serif, dark mode, decorative motion.
+- Borrowed from the craft notes: secondary text stays dark enough for contrast (`#3c4448` on white), and `:focus-visible` rather than `:focus`.
+
+What landed in `web/`:
+
+- Next.js App Router, TypeScript strict, Tailwind tokens, routes `/`, `/scan`, `/review`, `/patient`, `/results`, `/kendras`, `/print`.
+- In-memory session (`started` only). No `localStorage`, `sessionStorage`, or IndexedDB. Refresh of `/review`, `/patient`, `/results`, and `/print` renders "Your session was cleared for privacy. Start again."
+- `error.tsx`, `not-found.tsx`, `global-error.tsx`. Route errors do not print the exception text.
+- Skip link, landmarks, one `h1`, language switch that sets `<html lang>`, demo-data badge (fixture), offline banner component, repo disclaimer verbatim.
+- Hindi chrome for interface labels. Disclaimer, recovery, and offline Hindi stay `TODO_NEEDS_HUMAN_REVIEW` and are not rendered; the UI falls back to the English sentence with `lang="en"`. `CI_STRICT=1` makes `src/lib/i18n/catalog.test.ts` fail while those keys remain.
+- Scan, review, patient, results, kendras, and print are shells. Camera, matching, prices, and Kendra rows are later milestones.
+
+Commands from `web/` (root `package.json` delegates the same names):
+
+- `npm run lint` — next lint, no warnings or errors.
+- `npm run typecheck` — `tsc --noEmit`, pass.
+- `npm run test:unit` — 2 files, 6 tests, pass.
+- `npm run test:component` — 3 files, 7 tests, pass.
+- `npm run build` — Next.js 15.5.28 production build, 11 static pages, pass.
+- `npm run test:e2e` — Playwright chromium, 2 passed (home shell; `/review` refresh recovery).
+- `npm run test:backend` from the repo root still cannot collect tests (`No module named pytest`). Baseline unchanged.
+
+Browser check this milestone is the Playwright run above (headless Chromium). Screenshots at 320/375/768/1280 are reserved for the responsive milestone.
