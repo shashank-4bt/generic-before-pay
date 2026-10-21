@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DISCLAIMER, OFFLINE_MESSAGE, RECOVERY_MESSAGE } from "@/lib/copy/approved";
+import { DISCLAIMER, NOT_IN_DATA, OFFLINE_MESSAGE, RECOVERY_MESSAGE } from "@/lib/copy/approved";
 import { en } from "@/lib/i18n/en";
 import { hi } from "@/lib/i18n/hi";
 import { TODO_NEEDS_HUMAN_REVIEW } from "@/lib/i18n/placeholder";
@@ -12,6 +12,7 @@ describe("copy catalog", () => {
     expect(en.disclaimer).toBe(DISCLAIMER);
     expect(en["recovery.body"]).toBe(RECOVERY_MESSAGE);
     expect(en["offline.body"]).toBe(OFFLINE_MESSAGE);
+    expect(en["info.missing"]).toBe(NOT_IN_DATA);
   });
 
   it("falls back to English when Hindi is unapproved and does not return the placeholder", () => {
@@ -27,7 +28,7 @@ describe("copy catalog", () => {
     if (process.env.CI_STRICT === "1") {
       expect(keys, "TODO_NEEDS_HUMAN_REVIEW is still in the Hindi catalog").toEqual([]);
     } else {
-      expect(keys).toEqual(["disclaimer", "recovery.body", "offline.body"]);
+      expect(keys).toEqual(["disclaimer", "recovery.body", "offline.body", "info.missing"]);
     }
   });
 

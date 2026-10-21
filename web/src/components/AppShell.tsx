@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { CatalogStatus } from "@/components/CatalogStatus";
 import { DemoBadge } from "@/components/DemoBadge";
+import { loadBundledCatalog } from "@/lib/data/load";
 import { DisclaimerBlock } from "@/components/DisclaimerBlock";
 import { LanguageSwitch } from "@/components/LanguageSwitch";
 import { OfflineBanner } from "@/components/OfflineBanner";
@@ -15,6 +17,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { t } = useI18n();
   const { state, dispatch } = useSession();
+  const catalog = loadBundledCatalog();
   const skip = t("skip");
   const again = t("action.startOver");
 
@@ -50,6 +53,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <StepIndicator pathname={pathname} />
       </header>
       <main id="main" className="shell-wrap" tabIndex={-1}>
+        <CatalogStatus outcome={catalog} />
         {children}
       </main>
       <footer className="site-footer">

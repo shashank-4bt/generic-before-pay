@@ -44,6 +44,8 @@ export const hi: Record<MessageKey, string> = {
   disclaimer: TODO_NEEDS_HUMAN_REVIEW,
   "recovery.body": TODO_NEEDS_HUMAN_REVIEW,
   "offline.body": TODO_NEEDS_HUMAN_REVIEW,
+  "info.missing": TODO_NEEDS_HUMAN_REVIEW,
+  "data.unavailable": "दवाओं की सूची लोड नहीं हो सकी।",
   "demo.badge": "डेमो डेटा",
   "error.title": "कुछ गड़बड़ हो गई",
   "error.body": "आप फिर कोशिश कर सकते हैं, या शुरू से शुरू कर सकते हैं। इस स्क्रीन की जानकारी रखी नहीं जाती।",

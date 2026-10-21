@@ -323,3 +323,32 @@ Commands from `web/` (root `package.json` delegates the same names):
 - `npm run test:backend` from the repo root still cannot collect tests (`No module named pytest`). Baseline unchanged.
 
 Browser check this milestone is the Playwright run above (headless Chromium). Screenshots at 320/375/768/1280 are reserved for the responsive milestone.
+
+### Phase A — data layer, matcher, pricing
+
+Data:
+
+- `web/scripts/sync-data.ts` reads `data/curated_drugs.json` and writes `web/src/data/catalog.json`. The build runs it first. The source file is not rewritten.
+- 20 rows, provenance `fixture`, content SHA-256 `c9176732bc431971662354ab40fb4ca2ef86b9aee79e92d92147217a8cdc0287` (same hash as `scripts/validate_and_normalize.py`).
+- Every display row has source, composition, strength, form, pack size, per-unit price when the unit string parses, and `priceDate: null`. No date is invented. Medicine info is absent, so the English sentence is `Not in our data. Please ask your pharmacist or doctor.` Hindi for that sentence is `TODO_NEEDS_HUMAN_REVIEW`.
+- Invalid catalogs throw in dev/test and return an empty list in production mode.
+
+Matcher:
+
+- TypeScript is the only user-facing matcher. Normalises case, whitespace, punctuation, and unicode marks. Does not transliterate Devanagari; the repo specifies no map.
+- Parses `Pantocid40`, `40mg`, `40 mg`, `500/125`, decimals, and mg/mcg/g/ml/IU/%.
+- Scores with trigrams, Damerau-Levenshtein, and a Double Metaphone bonus only when the spellings are already close.
+- Tier cutoffs are the only published numbers, from the reference matcher: below 70 none, at least 88 with a lead of 6 likely, otherwise uncertain. Marked provisional in `web/src/lib/matching/thresholds.ts` until a person confirms them.
+- A shared `tests/misspellings.json` is not in the repo. `web/src/lib/matching/suite.ts` is a labelled 54-case suite from real brand names and aliases.
+- Result: tier accuracy 100% (54/54). Confidently wrong exact/likely matches: 0.
+- Crosin resolves to Calpol 500 as uncertain (no price until a person picks). Pantocid40 resolves to Pan 40 as likely. metformine with no strength stays uncertain between Glycomet 500 and Glycomet SR 1000.
+- Ten lines match in well under 50ms. No worker.
+
+Pricing:
+
+- Statuses: `same_composition_comparable`, `different_strength`, `combination_drug`, `unit_mismatch`, `no_equivalent`, `missing_data`, `unconfirmed_match`.
+- Uncertain, none, and unconfirmed lines carry null prices and do not enter totals.
+- Positive gaps are labelled `listed saving`. Zero and negative gaps are labelled `listed price difference`.
+- Paise rounding. Different pack sizes use per-unit maths. No staleness threshold exists in the repo, so none is applied.
+
+Checks this run: `test:unit` 24 passed, `test:component` 7 passed, typecheck pass, lint pass. Full Playwright and screenshots stay for the last run.

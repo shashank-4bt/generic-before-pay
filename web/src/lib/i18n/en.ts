@@ -1,4 +1,4 @@
-import { DISCLAIMER, OFFLINE_MESSAGE, RECOVERY_MESSAGE } from "@/lib/copy/approved";
+import { DISCLAIMER, NOT_IN_DATA, OFFLINE_MESSAGE, RECOVERY_MESSAGE } from "@/lib/copy/approved";
 
 export const en = {
   skip: "Skip to content",
@@ -40,6 +40,8 @@ export const en = {
   disclaimer: DISCLAIMER,
   "recovery.body": RECOVERY_MESSAGE,
   "offline.body": OFFLINE_MESSAGE,
+  "info.missing": NOT_IN_DATA,
+  "data.unavailable": "The medicine list could not be loaded.",
   "demo.badge": "Demo data",
   "error.title": "Something went wrong",
   "error.body": "You can try again, or start again. Nothing from this screen is kept.",
